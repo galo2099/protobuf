@@ -204,17 +204,9 @@ func (p *size) sizeZigZag() {
 
 func (p *size) std(field *descriptor.FieldDescriptorProto, name string) (string, bool) {
 	if gogoproto.IsStdTime(field) {
-		if gogoproto.IsNullable(field) {
-			return p.typesPkg.Use() + `.SizeOfStdTime(*` + name + `)`, true
-		} else {
-			return p.typesPkg.Use() + `.SizeOfStdTime(` + name + `)`, true
-		}
+		return p.typesPkg.Use() + `.SizeOfStdTime(*` + name + `)`, true
 	} else if gogoproto.IsStdDuration(field) {
-		if gogoproto.IsNullable(field) {
-			return p.typesPkg.Use() + `.SizeOfStdDuration(*` + name + `)`, true
-		} else {
-			return p.typesPkg.Use() + `.SizeOfStdDuration(` + name + `)`, true
-		}
+		return p.typesPkg.Use() + `.SizeOfStdDuration(*` + name + `)`, true
 	}
 	return "", false
 }
@@ -444,8 +436,8 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 				sum = append(sum, strconv.Itoa(valueKeySize))
 				sum = append(sum, `soz`+p.localName+`(uint64(v))`)
 			case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
-				stdSizeCall, stdOk := p.std(field, "v")
 				if nullable {
+					stdSizeCall, stdOk := p.std(field, "v")
 					p.P(`l = 0`)
 					p.P(`if v != nil {`)
 					p.In()
@@ -461,6 +453,7 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 					p.P(`}`)
 					sum = append(sum, `l`)
 				} else {
+					stdSizeCall, stdOk := p.std(field, "&v")
 					if stdOk {
 						p.P(`l = `, stdSizeCall)
 					} else if valuegoTyp != valuegoAliasTyp {
@@ -477,8 +470,13 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 			p.Out()
 			p.P(`}`)
 		} else if repeated {
-			p.P(`for _, e := range m.`, fieldname, ` { `)
+			p.P(`for fieldIdx := range m.`, fieldname, ` { `)
 			p.In()
+			if gogoproto.IsNullable(field) {
+				p.P(`e := m.`, fieldname, `[fieldIdx]`)
+			} else {
+				p.P(`e := &m.`, fieldname, `[fieldIdx]`)
+			}
 			stdSizeCall, stdOk := p.std(field, "e")
 			if stdOk {
 				p.P(`l=`, stdSizeCall)
@@ -489,7 +487,13 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 			p.Out()
 			p.P(`}`)
 		} else {
-			stdSizeCall, stdOk := p.std(field, "m."+fieldname)
+			var stdSizeCall string
+			var stdOk bool
+			if gogoproto.IsNullable(field) {
+				stdSizeCall, stdOk = p.std(field, "m."+fieldname)
+			} else {
+				stdSizeCall, stdOk = p.std(field, "&m."+fieldname)
+			}
 			if stdOk {
 				p.P(`l=`, stdSizeCall)
 			} else {
@@ -635,10 +639,22 @@ func (p *size) Generate(file *generator.FileDescriptor) {
 			p.Out()
 			p.P(`}`)
 		}
+		if gogoproto.HasTypeDecl(file.FileDescriptorProto, message.DescriptorProto) {
+			p.P(`m.cached_size = n`)
+		}
 		p.P(`return n`)
 		p.Out()
 		p.P(`}`)
 		p.P()
+
+		if gogoproto.HasTypeDecl(file.FileDescriptorProto, message.DescriptorProto) {
+			p.P(`func (m *`, ccTypeName, `) CachedSize() (n int) {`)
+			p.In()
+			p.P(`return m.cached_size`)
+			p.Out()
+			p.P(`}`)
+			p.P()
+		}
 
 		//Generate Size methods for oneof fields
 		m := proto.Clone(message.DescriptorProto).(*descriptor.DescriptorProto)

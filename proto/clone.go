@@ -78,7 +78,7 @@ func mergeStruct(out, in reflect.Value) {
 	sprop := GetProperties(in.Type())
 	for i := 0; i < in.NumField(); i++ {
 		f := in.Type().Field(i)
-		if strings.HasPrefix(f.Name, "XXX_") {
+		if strings.HasPrefix(f.Name, "XXX_") || f.Name == "cached_size" {
 			continue
 		}
 		mergeAny(out.Field(i), in.Field(i), false, sprop.Prop[i])

@@ -276,6 +276,10 @@ func (tm *TextMarshaler) writeStruct(w *textWriter, sv reflect.Value) error {
 		props := sprops.Prop[i]
 		name := st.Field(i).Name
 
+		if name == "cached_size" {
+			continue
+		}
+
 		if strings.HasPrefix(name, "XXX_") {
 			// There are two XXX_ fields:
 			//   XXX_unrecognized []byte

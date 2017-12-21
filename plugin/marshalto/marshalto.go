@@ -836,27 +836,30 @@ func (p *marshalto) generateField(proto3 bool, numGen NumGen, file *generator.Fi
 			p.Out()
 			p.P(`}`)
 		} else if repeated {
-			p.P(`for _, msg := range m.`, fieldname, ` {`)
+			p.P(`for fieldIdx := range m.`, fieldname, ` {`)
 			p.In()
+			if gogoproto.IsNullable(field) {
+				p.P(`msg := m.`, fieldname, `[fieldIdx]`)
+			} else {
+				p.P(`msg := &m.`, fieldname, `[fieldIdx]`)
+			}
 			p.encodeKey(fieldNumber, wireType)
 			varName := "msg"
 			if gogoproto.IsStdTime(field) {
-				if gogoproto.IsNullable(field) {
-					varName = "*" + varName
-				}
-				p.callVarint(p.typesPkg.Use(), `.SizeOfStdTime(`, varName, `)`)
-				p.P(`n, err := `, p.typesPkg.Use(), `.StdTimeMarshalTo(`, varName, `, dAtA[i:])`)
+				p.callVarint(p.typesPkg.Use(), `.SizeOfStdTime(*`, varName, `)`)
+				p.P(`n, err := `, p.typesPkg.Use(), `.StdTimeMarshalTo(*`, varName, `, dAtA[i:])`)
 			} else if gogoproto.IsStdDuration(field) {
-				if gogoproto.IsNullable(field) {
-					varName = "*" + varName
-				}
-				p.callVarint(p.typesPkg.Use(), `.SizeOfStdDuration(`, varName, `)`)
-				p.P(`n, err := `, p.typesPkg.Use(), `.StdDurationMarshalTo(`, varName, `, dAtA[i:])`)
+				p.callVarint(p.typesPkg.Use(), `.SizeOfStdDuration(*`, varName, `)`)
+				p.P(`n, err := `, p.typesPkg.Use(), `.StdDurationMarshalTo(*`, varName, `, dAtA[i:])`)
 			} else if protoSizer {
 				p.callVarint(varName, ".ProtoSize()")
 				p.P(`n, err := `, varName, `.MarshalTo(dAtA[i:])`)
 			} else {
-				p.callVarint(varName, ".Size()")
+				if !gogoproto.IsCustomType(field) && gogoproto.HasTypeDecl(file.FileDescriptorProto, message.DescriptorProto) {
+					p.callVarint(varName, ".CachedSize()")
+				} else {
+					p.callVarint(varName, ".Size()")
+				}
 				p.P(`n, err := `, varName, `.MarshalTo(dAtA[i:])`)
 			}
 			p.P(`if err != nil {`)
@@ -886,7 +889,11 @@ func (p *marshalto) generateField(proto3 bool, numGen NumGen, file *generator.Fi
 				p.callVarint(varName, `.ProtoSize()`)
 				p.P(`n`, numGen.Next(), `, err := `, varName, `.MarshalTo(dAtA[i:])`)
 			} else {
-				p.callVarint(varName, `.Size()`)
+				if !gogoproto.IsCustomType(field) && gogoproto.HasTypeDecl(file.FileDescriptorProto, message.DescriptorProto) {
+					p.callVarint(varName, `.CachedSize()`)
+				} else {
+					p.callVarint(varName, ".Size()")
+				}
 				p.P(`n`, numGen.Next(), `, err := `, varName, `.MarshalTo(dAtA[i:])`)
 			}
 			p.P(`if err != nil {`)

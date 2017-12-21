@@ -97,7 +97,7 @@ func equalStruct(v1, v2 reflect.Value) bool {
 	sprop := GetProperties(v1.Type())
 	for i := 0; i < v1.NumField(); i++ {
 		f := v1.Type().Field(i)
-		if strings.HasPrefix(f.Name, "XXX_") {
+		if strings.HasPrefix(f.Name, "XXX_") || f.Name == "cached_size" {
 			continue
 		}
 		f1, f2 := v1.Field(i), v2.Field(i)

@@ -775,6 +775,7 @@ func getPropertiesLocked(t reflect.Type) *StructProperties {
 		f := t.Field(i)
 		p := new(Properties)
 		name := f.Name
+
 		p.init(f.Type, name, f.Tag.Get("protobuf"), &f, false)
 
 		if f.Name == "XXX_InternalExtensions" { // special case
@@ -809,7 +810,7 @@ func getPropertiesLocked(t reflect.Type) *StructProperties {
 			}
 			print("\n")
 		}
-		if p.enc == nil && !strings.HasPrefix(f.Name, "XXX_") && oneof == "" {
+		if p.enc == nil && !strings.HasPrefix(f.Name, "XXX_") && !(f.Name == "cached_size") && oneof == "" {
 			fmt.Fprintln(os.Stderr, "proto: no encoder for", f.Name, f.Type.String(), "[GetProperties]")
 		}
 	}

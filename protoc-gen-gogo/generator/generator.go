@@ -2214,6 +2214,7 @@ func (g *Generator) generateMessage(message *Descriptor) {
 		if gogoproto.HasUnrecognized(g.file.FileDescriptorProto, message.DescriptorProto) && !message.proto3() {
 			g.P("XXX_unrecognized\t[]byte `json:\"-\"`")
 		}
+		g.P("cached_size int")
 		g.Out()
 		g.P("}")
 	} else {
