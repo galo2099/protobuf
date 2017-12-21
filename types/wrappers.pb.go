@@ -49,7 +49,8 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 // The JSON representation for `DoubleValue` is JSON number.
 type DoubleValue struct {
 	// The double value.
-	Value float64 `protobuf:"fixed64,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       float64 `protobuf:"fixed64,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *DoubleValue) Reset()                    { *m = DoubleValue{} }
@@ -69,7 +70,8 @@ func (m *DoubleValue) GetValue() float64 {
 // The JSON representation for `FloatValue` is JSON number.
 type FloatValue struct {
 	// The float value.
-	Value float32 `protobuf:"fixed32,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       float32 `protobuf:"fixed32,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *FloatValue) Reset()                    { *m = FloatValue{} }
@@ -89,7 +91,8 @@ func (m *FloatValue) GetValue() float32 {
 // The JSON representation for `Int64Value` is JSON string.
 type Int64Value struct {
 	// The int64 value.
-	Value int64 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       int64 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *Int64Value) Reset()                    { *m = Int64Value{} }
@@ -109,7 +112,8 @@ func (m *Int64Value) GetValue() int64 {
 // The JSON representation for `UInt64Value` is JSON string.
 type UInt64Value struct {
 	// The uint64 value.
-	Value uint64 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       uint64 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *UInt64Value) Reset()                    { *m = UInt64Value{} }
@@ -129,7 +133,8 @@ func (m *UInt64Value) GetValue() uint64 {
 // The JSON representation for `Int32Value` is JSON number.
 type Int32Value struct {
 	// The int32 value.
-	Value int32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       int32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *Int32Value) Reset()                    { *m = Int32Value{} }
@@ -149,7 +154,8 @@ func (m *Int32Value) GetValue() int32 {
 // The JSON representation for `UInt32Value` is JSON number.
 type UInt32Value struct {
 	// The uint32 value.
-	Value uint32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       uint32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *UInt32Value) Reset()                    { *m = UInt32Value{} }
@@ -169,7 +175,8 @@ func (m *UInt32Value) GetValue() uint32 {
 // The JSON representation for `BoolValue` is JSON `true` and `false`.
 type BoolValue struct {
 	// The bool value.
-	Value bool `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       bool `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *BoolValue) Reset()                    { *m = BoolValue{} }
@@ -189,7 +196,8 @@ func (m *BoolValue) GetValue() bool {
 // The JSON representation for `StringValue` is JSON string.
 type StringValue struct {
 	// The string value.
-	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *StringValue) Reset()                    { *m = StringValue{} }
@@ -209,7 +217,8 @@ func (m *StringValue) GetValue() string {
 // The JSON representation for `BytesValue` is JSON string.
 type BytesValue struct {
 	// The bytes value.
-	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value       []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	cached_size int
 }
 
 func (m *BytesValue) Reset()                    { *m = BytesValue{} }
@@ -1234,7 +1243,12 @@ func (m *DoubleValue) Size() (n int) {
 	if m.Value != 0 {
 		n += 9
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *DoubleValue) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *FloatValue) Size() (n int) {
@@ -1243,7 +1257,12 @@ func (m *FloatValue) Size() (n int) {
 	if m.Value != 0 {
 		n += 5
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *FloatValue) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *Int64Value) Size() (n int) {
@@ -1252,7 +1271,12 @@ func (m *Int64Value) Size() (n int) {
 	if m.Value != 0 {
 		n += 1 + sovWrappers(uint64(m.Value))
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *Int64Value) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *UInt64Value) Size() (n int) {
@@ -1261,7 +1285,12 @@ func (m *UInt64Value) Size() (n int) {
 	if m.Value != 0 {
 		n += 1 + sovWrappers(uint64(m.Value))
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *UInt64Value) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *Int32Value) Size() (n int) {
@@ -1270,7 +1299,12 @@ func (m *Int32Value) Size() (n int) {
 	if m.Value != 0 {
 		n += 1 + sovWrappers(uint64(m.Value))
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *Int32Value) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *UInt32Value) Size() (n int) {
@@ -1279,7 +1313,12 @@ func (m *UInt32Value) Size() (n int) {
 	if m.Value != 0 {
 		n += 1 + sovWrappers(uint64(m.Value))
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *UInt32Value) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *BoolValue) Size() (n int) {
@@ -1288,7 +1327,12 @@ func (m *BoolValue) Size() (n int) {
 	if m.Value {
 		n += 2
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *BoolValue) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *StringValue) Size() (n int) {
@@ -1298,7 +1342,12 @@ func (m *StringValue) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovWrappers(uint64(l))
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *StringValue) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *BytesValue) Size() (n int) {
@@ -1308,7 +1357,12 @@ func (m *BytesValue) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovWrappers(uint64(l))
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *BytesValue) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func sovWrappers(x uint64) (n int) {
@@ -2159,7 +2213,7 @@ func init() { proto.RegisterFile("wrappers.proto", fileDescriptorWrappers) }
 
 var fileDescriptorWrappers = []byte{
 	// 278 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2b, 0x2f, 0x4a, 0x2c,
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0x2b, 0x2f, 0x4a, 0x2c,
 	0x28, 0x48, 0x2d, 0x2a, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x4f, 0xcf, 0xcf, 0x4f,
 	0xcf, 0x49, 0x85, 0xf0, 0x92, 0x4a, 0xd3, 0x94, 0x94, 0xb9, 0xb8, 0x5d, 0xf2, 0x4b, 0x93, 0x72,
 	0x52, 0xc3, 0x12, 0x73, 0x4a, 0x53, 0x85, 0x44, 0xb8, 0x58, 0xcb, 0x40, 0x0c, 0x09, 0x46, 0x05,

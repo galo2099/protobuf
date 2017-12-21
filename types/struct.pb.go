@@ -70,7 +70,8 @@ func (NullValue) XXX_WellKnownType() string       { return "NullValue" }
 // The JSON representation for `Struct` is JSON object.
 type Struct struct {
 	// Unordered map of dynamically typed values.
-	Fields map[string]*Value `protobuf:"bytes,1,rep,name=fields" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Fields      map[string]*Value `protobuf:"bytes,1,rep,name=fields" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	cached_size int
 }
 
 func (m *Struct) Reset()                    { *m = Struct{} }
@@ -101,7 +102,8 @@ type Value struct {
 	//	*Value_BoolValue
 	//	*Value_StructValue
 	//	*Value_ListValue
-	Kind isValue_Kind `protobuf_oneof:"kind"`
+	Kind        isValue_Kind `protobuf_oneof:"kind"`
+	cached_size int
 }
 
 func (m *Value) Reset()                    { *m = Value{} }
@@ -331,7 +333,8 @@ func _Value_OneofSizer(msg proto.Message) (n int) {
 // The JSON representation for `ListValue` is JSON array.
 type ListValue struct {
 	// Repeated field of dynamically typed values.
-	Values []*Value `protobuf:"bytes,1,rep,name=values" json:"values,omitempty"`
+	Values      []*Value `protobuf:"bytes,1,rep,name=values" json:"values,omitempty"`
+	cached_size int
 }
 
 func (m *ListValue) Reset()                    { *m = ListValue{} }
@@ -804,7 +807,7 @@ func (m *Value_StructValue) MarshalTo(dAtA []byte) (int, error) {
 	if m.StructValue != nil {
 		dAtA[i] = 0x2a
 		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.StructValue.Size()))
+		i = encodeVarintStruct(dAtA, i, uint64(m.StructValue.CachedSize()))
 		n3, err := m.StructValue.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
@@ -818,7 +821,7 @@ func (m *Value_ListValue) MarshalTo(dAtA []byte) (int, error) {
 	if m.ListValue != nil {
 		dAtA[i] = 0x32
 		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.ListValue.Size()))
+		i = encodeVarintStruct(dAtA, i, uint64(m.ListValue.CachedSize()))
 		n4, err := m.ListValue.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
@@ -843,10 +846,11 @@ func (m *ListValue) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if len(m.Values) > 0 {
-		for _, msg := range m.Values {
+		for fieldIdx := range m.Values {
+			msg := m.Values[fieldIdx]
 			dAtA[i] = 0xa
 			i++
-			i = encodeVarintStruct(dAtA, i, uint64(msg.Size()))
+			i = encodeVarintStruct(dAtA, i, uint64(msg.CachedSize()))
 			n, err := msg.MarshalTo(dAtA[i:])
 			if err != nil {
 				return 0, err
@@ -1037,7 +1041,12 @@ func (m *Struct) Size() (n int) {
 			n += mapEntrySize + 1 + sovStruct(uint64(mapEntrySize))
 		}
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *Struct) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *Value) Size() (n int) {
@@ -1046,7 +1055,12 @@ func (m *Value) Size() (n int) {
 	if m.Kind != nil {
 		n += m.Kind.Size()
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *Value) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func (m *Value_NullValue) Size() (n int) {
@@ -1096,12 +1110,18 @@ func (m *ListValue) Size() (n int) {
 	var l int
 	_ = l
 	if len(m.Values) > 0 {
-		for _, e := range m.Values {
+		for fieldIdx := range m.Values {
+			e := m.Values[fieldIdx]
 			l = e.Size()
 			n += 1 + l + sovStruct(uint64(l))
 		}
 	}
+	m.cached_size = n
 	return n
+}
+
+func (m *ListValue) CachedSize() (n int) {
+	return m.cached_size
 }
 
 func sovStruct(x uint64) (n int) {
@@ -1783,7 +1803,7 @@ func init() { proto.RegisterFile("struct.proto", fileDescriptorStruct) }
 
 var fileDescriptorStruct = []byte{
 	// 432 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0xb1, 0x6f, 0xd3, 0x40,
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x74, 0x91, 0xb1, 0x6f, 0xd3, 0x40,
 	0x14, 0xc6, 0xfd, 0x9c, 0xc6, 0x22, 0xcf, 0x55, 0xa9, 0x0e, 0x09, 0xa2, 0x22, 0x1d, 0x51, 0xba,
 	0x58, 0x08, 0x79, 0x08, 0x0b, 0x22, 0x2c, 0x58, 0x2a, 0xad, 0x84, 0x55, 0x19, 0x43, 0x8b, 0xc4,
 	0x12, 0xe1, 0xd4, 0x8d, 0xac, 0x5e, 0xef, 0x2a, 0xfb, 0x0c, 0xca, 0x06, 0xff, 0x05, 0x33, 0x13,
